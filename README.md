@@ -429,4 +429,73 @@ Sesión previa y add-ons migraron de opciones fijas (radio) a arrays dinámicos 
 
 ---
 
+## 🚀 DEPLOYMENT (GitHub Pages)
+
+### Datos del Repositorio
+
+| Campo | Valor |
+|:------|:------|
+| **GitHub Username** | `sanluispropublicidad-ai` |
+| **Repo** | `calculadora-slpro` |
+| **URL del repo** | https://github.com/sanluispropublicidad-ai/calculadora-slpro |
+| **URL pública (live)** | https://sanluispropublicidad-ai.github.io/calculadora-slpro/ |
+| **Branch** | `main` |
+| **GitHub Pages** | ✅ Activo (deploy from branch, root /) |
+| **Hosting** | GitHub Pages (gratis, HTTPS automático) |
+| **Primer deploy** | 16 Abril 2026 |
+
+### Archivos que se suben al repo
+
+| Archivo | Se sube | Razón |
+|:--------|:--------|:------|
+| `index.html` | ✅ | UI principal |
+| `styles.css` | ✅ | Estilos |
+| `app.js` | ✅ | Motor de cálculo |
+| `README.md` | ✅ | Documentación |
+| `.gitignore` | ✅ | Protección |
+| `secrets.txt` | ❌ **NUNCA** | Estrategia de negocio privada |
+| `config/` | ❌ | Carpeta reservada local |
+| `output/` | ❌ | Caché local |
+| `*.md` (pecados, catálogo, checklist) | ❌ | Docs internos de negocio |
+
+### Cómo hacer push de cambios
+
+**Desde terminal (PowerShell):**
+```powershell
+# 1. Navegar al proyecto
+Set-Location "c:\Users\SAN LUIS PRO\SANLUISPROOAZ\2026-2027\CALCULADORA_V2"
+
+# 2. Ver qué cambió
+git status
+
+# 3. Agregar archivos modificados
+git add index.html styles.css app.js README.md
+
+# 4. Commit con mensaje descriptivo
+git commit -m "descripcion del cambio"
+
+# 5. Push a GitHub (se actualiza el sitio en 1-2 min)
+git push origin main
+```
+
+**Desde Antigravity IDE (con MCP GitHub):**
+```
+"sube los cambios de la calculadora a GitHub"
+→ El agente ejecuta git add + commit + push automáticamente
+```
+
+### Cómo verificar que el sitio está vivo
+1. Abrir: https://sanluispropublicidad-ai.github.io/calculadora-slpro/
+2. Tras cada push, GitHub Pages tarda **1-3 minutos** en actualizar
+3. Si dice "Site not found" → esperar y reload
+
+### Git Config del proyecto
+```
+user.name = San Luis PRO
+user.email = sanluispro@slpro.com
+remote.origin = https://github.com/sanluispropublicidad-ai/calculadora-slpro.git
+```
+
+---
+
 *README forjado por Claude Opus 4.5 bajo doctrina 33X. Cualquier modelo que toque este código: lee los gotchas primero.*

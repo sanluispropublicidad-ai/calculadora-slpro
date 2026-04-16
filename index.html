@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CALCULADORA SLPRO V2 - Cotizador Profesional</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- PDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <!-- OVERLAY for sidebar -->
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">⚜️</span>
+                <div class="logo-text">
+                    <h1>SAN LUIS PRO</h1>
+                    <p>Cotizador V2 | El Seguro de Vida de tu Evento</p>
+                </div>
+            </div>
+<div class="header-actions">
+<button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
+<svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="12" cy="12" r="5"></circle>
+<line x1="12" y1="1" x2="12" y2="3"></line>
+<line x1="12" y1="21" x2="12" y2="23"></line>
+<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+<line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+<line x1="1" y1="12" x2="3" y2="12"></line>
+<line x1="21" y1="12" x2="23" y2="12"></line>
+<line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+<line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+</svg>
+<svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+</svg>
+</button>
+<button class="btn btn-outline" onclick="resetAll()">🔄 LIMPIAR</button>
+<button class="btn btn-gold" onclick="generarCotizacion()">📄 GENERAR</button>
+</div>
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-layout">
+            <!-- LEFT: Sidebar Config -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <h2>⚙️ CONFIGURACIÓN</h2>
+                    <button class="close-btn" onclick="toggleSidebar()">✕</button>
+                </div>
+                
+                <div class="sidebar-content">
+                    <!-- MÓDULO: CREW -->
+                    <div class="config-section">
+                        <h3>👤 CREW / NÓMINA</h3>
+                        <div class="config-row">
+                            <label>Fotógrafo Base ($)</label>
+                            <input type="number" id="cfg_crew_base" value="800" onchange="updateBaseCosts()">
+                        </div>
+                        <div class="config-row">
+                            <label>Por Hora ($)</label>
+                            <input type="number" id="cfg_crew_hora" value="50" onchange="updateBaseCosts()">
+                        </div>
+                        <div class="config-row">
+                            <label>Asistente ($)</label>
+                            <input type="number" id="cfg_crew_asistente" value="800" onchange="updateBaseCosts()">
+                        </div>
+                        <div class="config-row">
+                            <label>Camarógrafo ($)</label>
+                            <input type="number" id="cfg_crew_camarografo" value="800" onchange="updateBaseCosts()">
+                        </div>
+                        <div class="config-row">
+                            <label>Operador Drone ($)</label>
+                            <input type="number" id="cfg_crew_drone" value="800" onchange="updateBaseCosts()">
+                        </div>
+                        <div class="config-row">
+                            <label>Técnico Streaming ($)</label>
+                            <input type="number" id="cfg_crew_streaming" value="1000" onchange="updateBaseCosts()">
+                        </div>
+                    </div>
+
+                    <!-- MÓDULO: ADD-ONS -->
+                    <div class="config-section">
+                        <h3>⚡ ADD-ONS</h3>
+                        <div class="config-row">
+                            <label>Drone ($)</label>
+                            <input type="number" id="cfg_addon_drone" value="800" onchange="updateBaseCosts()">
+                        </div>
+                        <div class="config-row">
+                            <label>Stream iPhone ($)</label>
+                            <input type="number" id="cfg_addon_streaming_iphone" value="800" onchange="updateBaseCosts()">
+                        </div>
+                        <div class="config-row">
+                            <label>Stream ATEM ($)</label>
+                            <input type="number" id="cfg_addon_streaming_atem" value="2500" onchange="updateBaseCosts()">
+                        </div>
+                        <div class="config-row">
+                            <label>2ª Cámara ($)</label>
+                            <input type="number" id="cfg_addon_2cam" value="800" onchange="updateBaseCosts()">
+                        </div>
+                        <div class="config-row">
+                            <label>USB ($)</label>
+                            <input type="number" id="cfg_addon_usb" value="150" onchange="updateBaseCosts()">
+                        </div>
+                        <div class="config-row">
+                            <label>Maquillaje ($)</label>
+                            <input type="number" id="cfg_addon_maquillaje" value="500" onchange="updateBaseCosts()">
+                        </div>
+                    </div>
+
+                    <!-- MÓDULO: SESIÓN PREVIA -->
+                    <div class="config-section">
+                        <h3>📸 SESIÓN PREVIA</h3>
+                        <div class="config-row">
+                            <label>1 Fondo ($)</label>
+                            <input type="number" id="cfg_sesion_1" value="500" onchange="updateBaseCosts()">
+                        </div>
+                        <div class="config-row">
+                            <label>2 Fondos ($)</label>
+                            <input type="number" id="cfg_sesion_2" value="800" onchange="updateBaseCosts()">
+                        </div>
+                        <div class="config-row">
+                            <label>3 Fondos ($)</label>
+                            <input type="number" id="cfg_sesion_3" value="1200" onchange="updateBaseCosts()">
+                        </div>
+                    </div>
+
+                    <!-- MÓDULO: VIDEO -->
+                    <div class="config-section">
+                        <h3>🎬 VIDEO</h3>
+                        <div class="config-row">
+                            <label>Highlight Reel ($)</label>
+                            <input type="number" id="cfg_video_highlight" value="500" onchange="updateBaseCosts()">
+                        </div>
+                        <div class="config-row">
+                            <label>1 Cám / Hora ($)</label>
+                            <input type="number" id="cfg_video_cam1_hora" value="100" onchange="updateBaseCosts()">
+                        </div>
+                        <div class="config-row">
+                            <label>2 Cáms / Hora ($)</label>
+                            <input type="number" id="cfg_video_cam2_hora" value="180" onchange="updateBaseCosts()">
+                        </div>
+                        <div class="config-row">
+                            <label>3 Cáms / Hora ($)</label>
+                            <input type="number" id="cfg_video_cam3_hora" value="250" onchange="updateBaseCosts()">
+                        </div>
+                    </div>
+
+                    <!-- MÓDULO: MARCOS A1 -->
+                    <div class="config-section">
+                        <h3>🖼️ MARCOS A1 (ELITE)</h3>
+                        <div class="config-row"><label>11x14 ($)</label><input type="number" id="cfg_a1_11x14" value="817" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>16x20 ($)</label><input type="number" id="cfg_a1_16x20" value="1310" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>20x30 ($)</label><input type="number" id="cfg_a1_20x30" value="2025" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>24x36 ($)</label><input type="number" id="cfg_a1_24x36" value="2587" onchange="updateBaseCosts()"></div>
+                    </div>
+
+                    <!-- MÓDULO: MARCOS B2 -->
+                    <div class="config-section">
+                        <h3>🖼️ MARCOS B2 (VOLUMEN)</h3>
+                        <div class="config-row"><label>8x10 ($)</label><input type="number" id="cfg_b2_8x10" value="581" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>11x14 ($)</label><input type="number" id="cfg_b2_11x14" value="771" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>16x20 ($)</label><input type="number" id="cfg_b2_16x20" value="1283" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>20x30 ($)</label><input type="number" id="cfg_b2_20x30" value="1989" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>24x36 ($)</label><input type="number" id="cfg_b2_24x36" value="2527" onchange="updateBaseCosts()"></div>
+                    </div>
+
+                    <!-- MÓDULO: MARCOS C1 -->
+                    <div class="config-section">
+                        <h3>🖼️ MARCOS C1 (AESTHETIC)</h3>
+                        <div class="config-row"><label>8x10 ($)</label><input type="number" id="cfg_c1_8x10" value="324" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>11x14 ($)</label><input type="number" id="cfg_c1_11x14" value="487" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>16x20 ($)</label><input type="number" id="cfg_c1_16x20" value="886" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>20x30 ($)</label><input type="number" id="cfg_c1_20x30" value="1442" onchange="updateBaseCosts()"></div>
+                    </div>
+
+                    <!-- MÓDULO: CANVAS -->
+                    <div class="config-section">
+                        <h3>🎨 CANVAS</h3>
+                        <div class="config-row"><label>16x20 ($)</label><input type="number" id="cfg_canvas_16x20" value="459" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>20x24 ($)</label><input type="number" id="cfg_canvas_20x24" value="555" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>24x30 ($)</label><input type="number" id="cfg_canvas_24x30" value="671" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>30x40 ($)</label><input type="number" id="cfg_canvas_30x40" value="852" onchange="updateBaseCosts()"></div>
+                    </div>
+
+                    <!-- MÓDULO: FOTOS -->
+                    <div class="config-section">
+                        <h3>🖼️ FOTOS IMPRESAS</h3>
+                        <div class="config-row"><label>8x10 ($)</label><input type="number" id="cfg_foto_8x10" value="103" onchange="updateBaseCosts()"></div>
+                    </div>
+
+                    <!-- MÓDULO: FLYERS -->
+                    <div class="config-section">
+                        <h3>📋 FLYERS</h3>
+                        <div class="config-row"><label>Boda/XV ($)</label><input type="number" id="cfg_flyer_boda" value="400" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>Jaripeo ($)</label><input type="number" id="cfg_flyer_jaripeo" value="500" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>Gallos ($)</label><input type="number" id="cfg_flyer_gallos" value="350" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>Cumpleaños ($)</label><input type="number" id="cfg_flyer_cumple" value="250" onchange="updateBaseCosts()"></div>
+                    </div>
+
+                    <!-- MÓDULO: MAYOREO -->
+                    <div class="config-section">
+                        <h3>📦 MAYOREO (SOLO LAB)</h3>
+                        <div class="config-row"><label>4x6 ($)</label><input type="number" id="cfg_bulk_4x6" value="3.50" step="0.01" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>5x7 ($)</label><input type="number" id="cfg_bulk_5x7" value="5.50" step="0.01" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>6x8 ($)</label><input type="number" id="cfg_bulk_6x8" value="7" step="0.01" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>8x10 ($)</label><input type="number" id="cfg_bulk_8x10" value="23" step="0.01" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>10x12 ($)</label><input type="number" id="cfg_bulk_10x12" value="34" step="0.01" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>11x14 ($)</label><input type="number" id="cfg_bulk_11x14" value="44" step="0.01" onchange="updateBaseCosts()"></div>
+                    </div>
+
+                    <!-- MÓDULO: EXTRAS LAB -->
+                    <div class="config-section">
+                        <h3>🛠️ EXTRAS (LAB)</h3>
+                        <div class="config-row"><label>Base Chica ($)</label><input type="number" id="cfg_extra_base_x_ch" value="22" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>Base Grande ($)</label><input type="number" id="cfg_extra_base_x_gr" value="66" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>Escaneo ($)</label><input type="number" id="cfg_extra_escaneo_norm" value="10" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>Escaneo Neg ($)</label><input type="number" id="cfg_extra_escaneo_neg" value="20" onchange="updateBaseCosts()"></div>
+                    </div>
+
+                    <!-- MÓDULO: VIÁTICOS -->
+                    <div class="config-section">
+                        <h3>🚗 VIÁTICOS</h3>
+                        <div class="config-row">
+                            <label>Gasolina ($/km)</label>
+                            <input type="number" id="cfg_viaticos_gas" value="5" onchange="updateBaseCosts()">
+                        </div>
+                    </div>
+
+                    <!-- MÓDULO: AI CONFIG -->
+                    <div class="config-section highlight">
+                        <h3>🧠 AI CONFIG (GLM-5.1)</h3>
+                        <div class="config-row">
+                            <label>API Key</label>
+                            <input type="password" id="cfg_ai_key" placeholder="nvapi-..." style="width:140px; font-size:10px;" onchange="localStorage.setItem('slpro_nvidia_key', this.value)">
+                        </div>
+                        <div class="config-row" style="flex-direction: column; align-items: flex-start;">
+                            <label>Master Prompt</label>
+                            <textarea id="cfg_ai_prompt" style="width: 100%; height: 80px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-size: 10px; padding: 5px; margin-top: 5px; resize: none;">Eres un asesor de ventas de élite para San Luis PRO. Analiza la cotización JSON que recibes. Tu meta es maximizar el margen de utilidad sugiriendo cambios concretos. Responde SOLO en JSON con esta estructura: {"strategy":"texto","suggestedMargin":4.0,"changes":["cambio1","cambio2"],"potentialIncrease":1.25}</textarea>
+                        </div>
+                    </div>
+
+                    <!-- MÓDULO: MÁRGENES -->
+                    <div class="config-section highlight">
+                        <h3>📈 MÁRGENES</h3>
+                        <div class="config-row">
+                            <label>Margen Default (x)</label>
+                            <input type="number" id="cfg_margen_default" value="3" step="0.1" min="1" max="10" onchange="updateMargin(false)">
+                        </div>
+                        <div class="config-row">
+                            <label>Tax / IVA (%)</label>
+                            <input type="number" id="cfg_tax" value="0" min="0" max="30" onchange="updateMargin(false)">
+                        </div>
+                        <div class="config-row">
+                            <label>Discount (%)</label>
+                            <input type="number" id="cfg_discount" value="0" min="0" max="100" onchange="updateMargin(false)">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-footer">
+                    <button class="btn btn-outline" onclick="resetConfig()">🔄 DEFAULT</button>
+                    <button class="btn btn-gold" onclick="toggleSidebar()">✅ APLICAR</button>
+                </div>
+            </aside>
+
+            <!-- RIGHT: Calculator Main -->
+            <main class="calculator">
+                <!-- CLIENT INFO -->
+                <section class="section client-info">
+                    <h2 class="section-title">👤 INFO CLIENTE</h2>
+                    <div class="client-grid">
+                        <div class="client-field">
+                            <label>Cliente</label>
+                            <input type="text" id="cliente_nombre" placeholder="Nombre completo">
+                        </div>
+                        <div class="client-field">
+                            <label>Evento</label>
+                            <input type="text" id="cliente_evento" placeholder="Tipo de evento">
+                        </div>
+                        <div class="client-field">
+                            <label>Fecha</label>
+                            <input type="date" id="cliente_fecha">
+                        </div>
+                        <div class="client-field">
+                            <label>Email</label>
+                            <input type="email" id="cliente_email" placeholder="correo@ejemplo.com">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TIPO DE EVENTO -->
+                <section class="section">
+                    <h2 class="section-title">🎯 TIPO DE EVENTO</h2>
+                    <div class="event-buttons">
+                        <button class="event-btn active" data-event="bodas" onclick="selectEvent('bodas')">💍 BODAS</button>
+                        <button class="event-btn" data-event="xv" onclick="selectEvent('xv')">👑 XV AÑOS</button>
+                        <button class="event-btn" data-event="fiestas50" onclick="selectEvent('fiestas50')">🎂 50+</button>
+                        <button class="event-btn" data-event="bautizos" onclick="selectEvent('bautizos')">⛪ BAUTIZOS</button>
+                        <button class="event-btn" data-event="jaripeos" onclick="selectEvent('jaripeos')">🐂 JARIPEOS</button>
+                        <button class="event-btn" data-event="sesion" onclick="selectEvent('sesion')">📷 SESIÓN</button>
+                        <button class="event-btn" data-event="videomusical" onclick="selectEvent('videomusical')">🎵 VIDEO MUSICAL</button>
+                        <button class="event-btn" data-event="privado" onclick="selectEvent('privado')">🎪 EVENTO PRIVADO</button>
+                        <button class="event-btn" data-event="otro" onclick="promptCustomEvent()">➕ OTRO</button>
+                    </div>
+                </section>
+
+                <!-- COBERTURA FOTOGRAFÍA -->
+                <section class="section">
+                    <h2 class="section-title">📷 FOTOGRAFÍA</h2>
+                    <div class="coverage-row">
+                        <div class="coverage-item">
+                            <label>Horas</label>
+                            <div class="hour-buttons" id="hourButtons">
+                                <button class="hour-btn" data-h="1" onclick="setHours(1)">1</button>
+                                <button class="hour-btn" data-h="2" onclick="setHours(2)">2</button>
+                                <button class="hour-btn" data-h="3" onclick="setHours(3)">3</button>
+                                <button class="hour-btn active" data-h="4" onclick="setHours(4)">4</button>
+                                <button class="hour-btn" data-h="6" onclick="setHours(6)">6</button>
+                                <button class="hour-btn" data-h="8" onclick="setHours(8)">8</button>
+                                <button class="hour-btn" data-h="10" onclick="setHours(10)">10</button>
+                            </div>
+                        </div>
+                        <div class="coverage-item">
+                            <label>Cámaras</label>
+                            <div class="cam-buttons" id="camButtons">
+                                <button class="cam-btn active" data-c="1" onclick="setCams(1)">1 📷</button>
+                                <button class="cam-btn" data-c="2" onclick="setCams(2)">2 📷</button>
+                                <button class="cam-btn" data-c="3" onclick="setCams(3)">3 📷</button>
+                                <button class="cam-btn" data-c="4" onclick="setCams(4)">4 📷</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ADD-ONS -->
+                <section class="section">
+                    <h2 class="section-title">⚡ ADD-ONS</h2>
+                    <div class="addon-grid" id="addonsGrid">
+                        <label class="addon-card">
+                            <input type="checkbox" id="addon_drone" onchange="calculate()">
+                            <span class="addon-check"></span>
+                            <span class="addon-name">🚁 DRONE</span>
+                            <span class="addon-price" id="price_drone">$800</span>
+                        </label>
+                        <label class="addon-card">
+                            <input type="checkbox" id="addon_streaming_iphone" onchange="calculate()">
+                            <span class="addon-check"></span>
+                            <span class="addon-name">📱 STREAM (iPhone)</span>
+                            <span class="addon-price" id="price_streaming_iphone">$800</span>
+                        </label>
+                        <label class="addon-card">
+                            <input type="checkbox" id="addon_streaming_atem" onchange="calculate()">
+                            <span class="addon-check"></span>
+                            <span class="addon-name">📺 STREAM (ATEM)</span>
+                            <span class="addon-price" id="price_streaming_atem">$2,500</span>
+                        </label>
+                        <label class="addon-card">
+                            <input type="checkbox" id="addon_2cam" onchange="calculate()">
+                            <span class="addon-check"></span>
+                            <span class="addon-name">📷 2ª CÁMARA</span>
+                            <span class="addon-price" id="price_2cam">$800</span>
+                        </label>
+                        <label class="addon-card">
+                            <input type="checkbox" id="addon_usb" checked onchange="calculate()">
+                            <span class="addon-check"></span>
+                            <span class="addon-name">💾 USB</span>
+                            <span class="addon-price" id="price_usb">$150</span>
+                        </label>
+                        <label class="addon-card">
+                            <input type="checkbox" id="addon_maquillaje" onchange="calculate()">
+                            <span class="addon-check"></span>
+                            <span class="addon-name">💄 MAQUILLAJE</span>
+                            <span class="addon-price" id="price_maquillaje">$500</span>
+                        </label>
+                    </div>
+                    <div id="customAddonsContainer"></div>
+                    <button class="btn btn-add" onclick="addCustomAddon()">➕ AGREGAR ADD-ON</button>
+                </section>
+
+                <!-- SESIÓN PREVIA -->
+                <section class="section">
+                    <h2 class="section-title">📸 SESIÓN PREVIA</h2>
+                    <div id="sesionPreviaContainer">
+                        <!-- Dynamic rows -->
+                    </div>
+                    <button class="btn btn-add" onclick="addSesionItem()">➕ AGREGAR ELEMENTO</button>
+                </section>
+
+                <!-- VIDEO -->
+                <section class="section">
+                    <h2 class="section-title">🎬 VIDEO</h2>
+                    <div class="video-options">
+                        <label class="video-opt">
+                            <input type="radio" name="video" value="0" checked onchange="toggleVideoConfig()">
+                            <span>Sin Video</span>
+                        </label>
+                        <label class="video-opt">
+                            <input type="radio" name="video" value="1" onchange="toggleVideoConfig()">
+                            <span>Highlight</span>
+                        </label>
+                        <label class="video-opt">
+                            <input type="radio" name="video" value="2" onchange="toggleVideoConfig()">
+                            <span>1 Cámara</span>
+                        </label>
+                        <label class="video-opt">
+                            <input type="radio" name="video" value="3" onchange="toggleVideoConfig()">
+                            <span>2 Cámaras</span>
+                        </label>
+                        <label class="video-opt">
+                            <input type="radio" name="video" value="4" onchange="toggleVideoConfig()">
+                            <span>3 Cámaras</span>
+                        </label>
+                    </div>
+                    <div id="videoConfigPanel" class="hidden" style="margin-top: 10px;">
+                        <div class="coverage-row" style="gap: 10px;">
+                            <div class="coverage-item">
+                                <label>Horas de Video</label>
+                                <div class="hour-buttons" id="videoHourButtons">
+                                    <button class="hour-btn" data-vh="1" onclick="setVideoHours(1)">1</button>
+                                    <button class="hour-btn" data-vh="2" onclick="setVideoHours(2)">2</button>
+                                    <button class="hour-btn" data-vh="3" onclick="setVideoHours(3)">3</button>
+                                    <button class="hour-btn active" data-vh="4" onclick="setVideoHours(4)">4</button>
+                                    <button class="hour-btn" data-vh="6" onclick="setVideoHours(6)">6</button>
+                                    <button class="hour-btn" data-vh="8" onclick="setVideoHours(8)">8</button>
+                                    <button class="hour-btn" data-vh="10" onclick="setVideoHours(10)">10</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CUADROS / MARCOS -->
+                <section class="section">
+                    <h2 class="section-title">🖼️ CUADROS / MARCOS</h2>
+                    <div id="framesContainer">
+                        <!-- Dynamic rows here -->
+                    </div>
+                    <button class="btn btn-add" onclick="addFrameRow()">➕ AGREGAR CUADRO</button>
+                </section>
+
+                <!-- CANVAS -->
+                <section class="section">
+                    <h2 class="section-title">🎨 CANVAS</h2>
+                    <div id="canvasContainer">
+                        <!-- Dynamic rows here -->
+                    </div>
+                    <button class="btn btn-add" onclick="addCanvasRow()">➕ AGREGAR CANVAS</button>
+                </section>
+
+                <!-- PORTARRETRATOS -->
+                <section class="section">
+                    <h2 class="section-title">🪞 PORTARRETRATOS</h2>
+                    <div id="portarretratosContainer">
+                        <!-- Dynamic rows -->
+                    </div>
+                    <button class="btn btn-add" onclick="addPortarretratoRow()">➕ AGREGAR PORTARRETRATO</button>
+                    <p class="section-note">*Portarretratos propios SLP (madera, acrílico, metal).</p>
+                </section>
+
+                <!-- FOTOS RETRATO -->
+                <section class="section">
+                    <h2 class="section-title">🖼️ RETRATOS / FINISHED</h2>
+                    <div id="fotoContainer"></div>
+                    <button class="btn-add" onclick="addFotoRow()">+ Agregar Retrato</button>
+                    <p class="section-note">*Precios incluyen retoque, base y textura.</p>
+                </section>
+
+                <!-- MAYOREO / SOLO IMPRESION -->
+                <section class="section">
+                    <h2 class="section-title">📦 MAYOREO / SOLO IMPRESIÓN</h2>
+                    <div id="bulkContainer"></div>
+                    <button class="btn-add" onclick="addBulkRow()">+ Agregar Paquete Lab</button>
+                    <p class="section-note">*Costo unitario de laboratorio sin acabados.</p>
+                </section>
+
+
+                <!-- FLYERS -->
+                <section class="section">
+                    <h2 class="section-title">📋 FLYERS</h2>
+                    <div class="flyer-toggle">
+                        <label class="toggle-card">
+                            <input type="checkbox" id="addon_flyers" onchange="toggleFlyers()">
+                            <span class="toggle-slider"></span>
+                            <span>Incluir Diseño</span>
+                        </label>
+                    </div>
+                    <select id="flyers_tipo" class="flyers-select hidden" onchange="calculate()">
+                        <option value="boda">Boda/XV ($400)</option>
+                        <option value="jaripeo">Jaripeo ($500)</option>
+                        <option value="gallos">Gallos ($350)</option>
+                        <option value="cumple">Cumpleaños ($250)</option>
+                    </select>
+                </section>
+
+                <!-- VIÁTICOS -->
+                <section class="section">
+                    <h2 class="section-title">🚗 VIÁTICOS</h2>
+                    <div class="viaticos-row">
+                        <label class="toggle-card">
+                            <input type="checkbox" id="addon_viaticos" onchange="toggleViaticos()">
+                            <span class="toggle-slider"></span>
+                            <span>Incluir Viáticos</span>
+                        </label>
+                        <div class="viaticos-inputs hidden" id="viaticosInputs">
+                            <input type="number" id="viaticos_km" value="50" placeholder="Km" onchange="calculate()">
+                            <span>km × $<span id="viaticos_gas_rate">5</span> +</span>
+                            <input type="number" id="viaticos_casetas" value="200" placeholder="Casetas" onchange="calculate()">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SERVICIOS EXTRAS (Lab) -->
+                <section class="section">
+                    <h2 class="section-title">🛠️ EXTRAS & LAB</h2>
+                    <div class="extras-grid">
+                        <label class="extra-item">
+                            <input type="checkbox" id="extra_base_x_ch" onchange="calculate()">
+                            <span>Base Chica X</span>
+                        </label>
+                        <label class="extra-item">
+                            <input type="checkbox" id="extra_base_x_gr" onchange="calculate()">
+                            <span>Base Grande X</span>
+                        </label>
+                        <label class="extra-item">
+                            <input type="checkbox" id="extra_escaneo_norm" onchange="calculate()">
+                            <span>Escaneo Normal</span>
+                        </label>
+                        <label class="extra-item">
+                            <input type="checkbox" id="extra_escaneo_neg" onchange="calculate()">
+                            <span>Escaneo Negativo</span>
+                        </label>
+                    </div>
+                </section>
+
+                <!-- LINE ITEMS CUSTOM -->
+                <section class="section">
+                    <h2 class="section-title">➕ EXTRA / CUSTOM</h2>
+                    <div id="customContainer">
+                        <!-- Dynamic rows here -->
+                    </div>
+                    <button class="btn btn-add" onclick="addCustomRow()">➕ AGREGAR LÍNEA</button>
+                </section>
+            </main>
+
+            <!-- STICKY SUMMARY -->
+            <aside class="summary">
+                <div class="summary-header">
+                    <h2>💰 RESUMEN</h2>
+                    <button class="btn btn-config" onclick="toggleSidebar()">⚙️</button>
+                </div>
+                
+                <div class="summary-content">
+                    <div class="summary-breakdown">
+                        <div class="summary-row">
+                            <span>📷 Fotografía</span>
+                            <span id="sum_foto">$0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>🎬 Video</span>
+                            <span id="sum_video">$0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>🚁 Drone</span>
+                            <span id="sum_drone">$0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>📺 Streaming</span>
+                            <span id="sum_streaming">$0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>📸 Sesión</span>
+                            <span id="sum_sesion">$0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>🖼️ Marcos</span>
+                            <span id="sum_marcos">$0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>🎨 Canvas</span>
+                            <span id="sum_canvas">$0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>🖼️ Fotos</span>
+                            <span id="sum_fotos">$0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>📋 Flyers</span>
+                            <span id="sum_flyers">$0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>🚗 Viáticos</span>
+                            <span id="sum_viaticos">$0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>➕ Extra</span>
+                            <span id="sum_custom">$0</span>
+                        </div>
+                    </div>
+
+                    <div class="summary-divider"></div>
+
+                    <div class="summary-subtotal">
+                        <span>SUBTOTAL</span>
+                        <span id="sum_subtotal">$0</span>
+                    </div>
+
+                    <div class="margin-control">
+                        <label>Margen: <span id="marginLabel">3.0x</span></label>
+                        <input type="range" id="marginSlider" min="1" max="10" step="0.1" value="3" oninput="updateMargin(true)">
+                        <div class="margin-labels">
+                            <span>1x</span><span>2.5x</span><span>5x</span><span>7.5x</span><span>10x</span>
+                        </div>
+                    </div>
+
+                    <div class="summary-calc">
+                        <div class="calc-line">
+                            <span>Costo × <span id="calcMargin">3</span></span>
+                            <span id="sum_margin">$0</span>
+                        </div>
+                        <div class="calc-line" id="taxLine" style="display:none;">
+                            <span>Tax (<span id="taxPct">0</span>%)</span>
+                            <span id="sum_tax">$0</span>
+                        </div>
+                        <div class="calc-line" id="discountLine" style="display:none;">
+                            <span>Descuento (<span id="discountPct">0</span>%)</span>
+                            <span id="sum_discount">-$0</span>
+                        </div>
+                    </div>
+
+                    <div class="summary-total">
+                        <span>TOTAL</span>
+                        <span id="sum_total">$0</span>
+                    </div>
+                </div>
+
+                <div class="summary-actions" style="display: flex; flex-direction: column; gap: 10px;">
+                    <button class="btn btn-gold btn-full" onclick="generarCotizacion()">📄 GENERAR COTIZACIÓN</button>
+                    <button class="btn btn-outline btn-full" style="border-color: var(--gold); color: var(--gold);" onclick="optimizeWithAI()">💎 OPTIMIZAR ESTRATEGIA (AI)</button>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- MODAL COTIZACIÓN -->
+    <div class="modal" id="modalCotizacion">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📄 COTIZACIÓN SLPRO</h2>
+                <button onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body" id="cotizacionContent">
+                <!-- Generated here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="copiarCotizacion()">📋 COPIAR</button>
+                <button class="btn btn-gold" onclick="descargarPDF()">💾 DESCARGAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL OPTIMIZACIÓN AI -->
+    <div class="modal" id="modalAI">
+        <div class="modal-content" style="max-width: 700px; background: var(--bg-card); border: 1px solid var(--gold);">
+            <div class="modal-header">
+                <h2 style="color: var(--gold);">🧠 ESTRATEGIA OPTIMIZADA 33X</h2>
+                <button onclick="closeAI()" style="background:none; border:none; color:var(--text-dim); font-size:20px; cursor:pointer;">✕</button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <div id="aiInsight" style="background: rgba(212, 175, 55, 0.1); border-left: 4px solid var(--gold); padding: 15px; margin-bottom: 20px; font-size: 14px; color: var(--gold-light); border-radius: 4px;">
+                    Analizando potencial de utilidad...
+                </div>
+                <div id="chart_profit" style="min-height: 300px;"></div>
+                <div id="aiDiff" style="margin-top: 15px; font-size: 12px; color: var(--text-dim); display:flex; flex-direction:column; gap:5px;"></div>
+            </div>
+            <div class="modal-footer" style="padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px;">
+                <button class="btn btn-outline" style="flex: 1;" onclick="closeAI()">DESCARTAR</button>
+                <button class="btn btn-gold" style="flex: 2;" onclick="applyAIOptimization()">APLICAR MEJORAS 33X</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "workspace": {
+    "name": "calculadora",
+    "createdAt": 1776642854538,
+    "preset": "starter"
+  },
+  "authorizedRoots": [
+    "C:\\Users\\SAN LUIS PRO\\SANLUISPROOAZ\\2026-2027\\CALCULADORA_V2\\calculadora"
+  ],
+  "reload": null,
+  "messaging": {
+    "enabled": true
+  }
+}

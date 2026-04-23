@@ -19,7 +19,7 @@
                 <span class="logo-icon">⚜️</span>
                 <div class="logo-text">
                     <h1>SAN LUIS PRO</h1>
-                    <p>Cotizador V2 | El Seguro de Vida de tu Evento</p>
+                    <p>Cotizador V2 | Motor Táctico de Rentabilidad B2B</p>
                 </div>
             </div>
 <div class="header-actions">
@@ -155,7 +155,10 @@
                         <h3>🖼️ MARCOS A1 (ELITE)</h3>
                         <div class="config-row"><label>11x14 ($)</label><input type="number" id="cfg_a1_11x14" value="817" onchange="updateBaseCosts()"></div>
                         <div class="config-row"><label>16x20 ($)</label><input type="number" id="cfg_a1_16x20" value="1310" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>16x24 ($)</label><input type="number" id="cfg_a1_16x24" value="1465" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>20x24 ($)</label><input type="number" id="cfg_a1_20x24" value="1687" onchange="updateBaseCosts()"></div>
                         <div class="config-row"><label>20x30 ($)</label><input type="number" id="cfg_a1_20x30" value="2025" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>24x30 ($)</label><input type="number" id="cfg_a1_24x30" value="2269" onchange="updateBaseCosts()"></div>
                         <div class="config-row"><label>24x36 ($)</label><input type="number" id="cfg_a1_24x36" value="2587" onchange="updateBaseCosts()"></div>
                     </div>
 
@@ -164,8 +167,12 @@
                         <h3>🖼️ MARCOS B2 (VOLUMEN)</h3>
                         <div class="config-row"><label>8x10 ($)</label><input type="number" id="cfg_b2_8x10" value="581" onchange="updateBaseCosts()"></div>
                         <div class="config-row"><label>11x14 ($)</label><input type="number" id="cfg_b2_11x14" value="771" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>11x16 ($)</label><input type="number" id="cfg_b2_11x16" value="845" onchange="updateBaseCosts()"></div>
                         <div class="config-row"><label>16x20 ($)</label><input type="number" id="cfg_b2_16x20" value="1283" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>16x24 ($)</label><input type="number" id="cfg_b2_16x24" value="1444" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>20x24 ($)</label><input type="number" id="cfg_b2_20x24" value="1653" onchange="updateBaseCosts()"></div>
                         <div class="config-row"><label>20x30 ($)</label><input type="number" id="cfg_b2_20x30" value="1989" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>24x30 ($)</label><input type="number" id="cfg_b2_24x30" value="2186" onchange="updateBaseCosts()"></div>
                         <div class="config-row"><label>24x36 ($)</label><input type="number" id="cfg_b2_24x36" value="2527" onchange="updateBaseCosts()"></div>
                     </div>
 
@@ -173,8 +180,14 @@
                     <div class="config-section">
                         <h3>🖼️ MARCOS C1 (AESTHETIC)</h3>
                         <div class="config-row"><label>8x10 ($)</label><input type="number" id="cfg_c1_8x10" value="324" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>8x12 ($)</label><input type="number" id="cfg_c1_8x12" value="368" onchange="updateBaseCosts()"></div>
                         <div class="config-row"><label>11x14 ($)</label><input type="number" id="cfg_c1_11x14" value="487" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>11x16 ($)</label><input type="number" id="cfg_c1_11x16" value="530" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>12x16 ($)</label><input type="number" id="cfg_c1_12x16" value="572" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>12x18 ($)</label><input type="number" id="cfg_c1_12x18" value="620" onchange="updateBaseCosts()"></div>
                         <div class="config-row"><label>16x20 ($)</label><input type="number" id="cfg_c1_16x20" value="886" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>16x24 ($)</label><input type="number" id="cfg_c1_16x24" value="997" onchange="updateBaseCosts()"></div>
+                        <div class="config-row"><label>20x24 ($)</label><input type="number" id="cfg_c1_20x24" value="1174" onchange="updateBaseCosts()"></div>
                         <div class="config-row"><label>20x30 ($)</label><input type="number" id="cfg_c1_20x30" value="1442" onchange="updateBaseCosts()"></div>
                     </div>
 
@@ -297,7 +310,7 @@
                 <section class="section">
                     <h2 class="section-title">🎯 TIPO DE EVENTO</h2>
                     <div class="event-buttons">
-                        <button class="event-btn active" data-event="bodas" onclick="selectEvent('bodas')">💍 BODAS</button>
+                        <button class="event-btn" data-event="bodas" onclick="selectEvent('bodas')">💍 BODAS</button>
                         <button class="event-btn" data-event="xv" onclick="selectEvent('xv')">👑 XV AÑOS</button>
                         <button class="event-btn" data-event="fiestas50" onclick="selectEvent('fiestas50')">🎂 50+</button>
                         <button class="event-btn" data-event="bautizos" onclick="selectEvent('bautizos')">⛪ BAUTIZOS</button>
@@ -316,10 +329,11 @@
                         <div class="coverage-item">
                             <label>Horas</label>
                             <div class="hour-buttons" id="hourButtons">
+                                <button class="hour-btn" data-h="0" onclick="setHours(0)">0</button>
                                 <button class="hour-btn" data-h="1" onclick="setHours(1)">1</button>
                                 <button class="hour-btn" data-h="2" onclick="setHours(2)">2</button>
                                 <button class="hour-btn" data-h="3" onclick="setHours(3)">3</button>
-                                <button class="hour-btn active" data-h="4" onclick="setHours(4)">4</button>
+                                <button class="hour-btn" data-h="4" onclick="setHours(4)">4</button>
                                 <button class="hour-btn" data-h="6" onclick="setHours(6)">6</button>
                                 <button class="hour-btn" data-h="8" onclick="setHours(8)">8</button>
                                 <button class="hour-btn" data-h="10" onclick="setHours(10)">10</button>
@@ -328,11 +342,16 @@
                         <div class="coverage-item">
                             <label>Cámaras</label>
                             <div class="cam-buttons" id="camButtons">
-                                <button class="cam-btn active" data-c="1" onclick="setCams(1)">1 📷</button>
+                                <button class="cam-btn" data-c="0" onclick="setCams(0)">0 📷</button>
+                                <button class="cam-btn" data-c="1" onclick="setCams(1)">1 📷</button>
                                 <button class="cam-btn" data-c="2" onclick="setCams(2)">2 📷</button>
                                 <button class="cam-btn" data-c="3" onclick="setCams(3)">3 📷</button>
                                 <button class="cam-btn" data-c="4" onclick="setCams(4)">4 📷</button>
                             </div>
+                        </div>
+                        <div class="coverage-item">
+                            <label>Precio Manual ($)</label>
+                            <input type="number" id="precio_foto_override" placeholder="Automático" step="0.01" style="width: 100px; padding: 5px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text);" oninput="handlePrecioFotoOverride(this.value)">
                         </div>
                     </div>
                 </section>
@@ -366,7 +385,7 @@
                             <span class="addon-price" id="price_2cam">$800</span>
                         </label>
                         <label class="addon-card">
-                            <input type="checkbox" id="addon_usb" checked onchange="calculate()">
+                            <input type="checkbox" id="addon_usb" onchange="calculate()">
                             <span class="addon-check"></span>
                             <span class="addon-name">💾 USB</span>
                             <span class="addon-price" id="price_usb">$150</span>
@@ -421,6 +440,7 @@
                             <div class="coverage-item">
                                 <label>Horas de Video</label>
                                 <div class="hour-buttons" id="videoHourButtons">
+                                    <button class="hour-btn" data-vh="0" onclick="setVideoHours(0)">0</button>
                                     <button class="hour-btn" data-vh="1" onclick="setVideoHours(1)">1</button>
                                     <button class="hour-btn" data-vh="2" onclick="setVideoHours(2)">2</button>
                                     <button class="hour-btn" data-vh="3" onclick="setVideoHours(3)">3</button>
@@ -674,7 +694,8 @@
                 <div id="aiInsight" style="background: rgba(212, 175, 55, 0.1); border-left: 4px solid var(--gold); padding: 15px; margin-bottom: 20px; font-size: 14px; color: var(--gold-light); border-radius: 4px;">
                     Analizando potencial de utilidad...
                 </div>
-                <div id="chart_profit" style="min-height: 300px;"></div>
+                <!-- Highcharts necesita altura explícita cuando se renderiza dentro de un div inicialmente oculto -->
+                <div id="chart_profit" style="height: 300px; width: 100%; display: block;"></div>
                 <div id="aiDiff" style="margin-top: 15px; font-size: 12px; color: var(--text-dim); display:flex; flex-direction:column; gap:5px;"></div>
             </div>
             <div class="modal-footer" style="padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px;">
@@ -684,7 +705,8 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-3d.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

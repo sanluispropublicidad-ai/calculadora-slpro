@@ -1,8 +1,8 @@
 # ⚜️ CALCULADORA SLPRO V2 — Cockpit de Cotización 33X
 
-> **El Seguro de Vida de tu Evento** — Cotizador Profesional Blindado  
+> **Motor Táctico de Rentabilidad B2B** — Cotizador Profesional Blindado  
 > San Luis PRO · Ponciano Arriaga / Ébano, SLP · Huasteca Potosina  
-> Última actualización: **15 Abril 2026** · Motor IA: GLM-5.1 vía NVIDIA NIM
+> Última actualización: **17 Abril 2026** · Motor IA: GLM-5.1 vía NVIDIA NIM
 
 ---
 
@@ -11,9 +11,9 @@
 | Capa | Tecnología | Razón |
 |:-----|:-----------|:------|
 | Estructura | HTML5 semántico | Cero dependencias, cero build |
-| Estilos | CSS3 nativo (Variables + Grid + Flex) | Responsive, Dark/Light mode |
+| Estilos | CSS3 nativo (Variables + Grid + Flex) | Responsive, Dark/Light mode (Tactical Red) |
 | Lógica | JavaScript vanilla ES6+ | ~1,618 líneas, cero frameworks |
-| PDF | html2pdf.js (CDN) | Exportación Noir & Gold |
+| PDF | html2pdf.js (CDN) | Exportación Noir & Red |
 | Gráficas | ApexCharts (CDN) | Visualización AI con gradientes |
 | IA | NVIDIA NIM API (GLM-5.1) | Optimización de márgenes en tiempo real |
 | Persistencia | localStorage | Soberanía total, cero servidores |
@@ -27,7 +27,7 @@
 ```text
 CALCULADORA_V2/
 ├── index.html          ← UI completa: sidebar config + calculadora + resumen (681 líneas)
-├── styles.css          ← Tema Noir & Gold + Dark/Light mode (17KB)
+├── styles.css          ← Tema Noir & Tactical Red + Dark/Light mode (17KB)
 ├── app.js              ← Motor central: state, costos, calculate(), AI engine (1,618 líneas)
 ├── README.md           ← ESTE ARCHIVO — mapa completo del proyecto
 ├── secrets.txt         ← Notas de estrategia de negocio (NO exponer)
@@ -219,7 +219,7 @@ Filas genéricas con: nombre + precio + cantidad. Para cobrar lo que se te ocurr
    - suggestedMargin: nuevo multiplicador
    - changes: lista de cambios recomendados
    - potentialIncrease: factor de incremento
-5. Se renderiza en modal con ApexChart (barras gold)
+5. Se renderiza en modal con ApexChart (barras rojas tácticas)
 6. Botón ✅ APLICAR actualiza el margen real
 ```
 
@@ -246,15 +246,15 @@ Si la API Key no está o falla la red, el sistema usa `simulateAI()`:
 - Se implementa con `[data-theme="light"]` en CSS Variables
 - **NO AFECTA** cálculos, precios ni lógica
 
-### Paleta Noir & Gold
+### Paleta Noir & Tactical Red
 ```css
---gold: #C9A84C          /* Oro principal */
---gold-soft: #D4B65C     /* Oro suave */
+--gold: #D32F2F          /* Rojo Táctico (antes oro) */
+--gold-soft: #FF5252     /* Rojo brillante (hovers) */
 --bg: #0D0D0D            /* Fondo oscuro */
 --bg-card: #1A1A1A       /* Tarjetas */
 --text: #E8E8E8          /* Texto principal */
 --green: #4CAF50         /* Positivos */
---red: #FF5252           /* Alertas */
+--red: #8B0000           /* Alertas/Remover */
 ```
 
 ---
@@ -318,7 +318,7 @@ El PDF muestra precios ya multiplicados como "precio unitario". El cliente ve el
 |:--------|:---------|
 | `triggerAI()` | Dispara optimización IA |
 | `simulateAI()` | Fallback local sin API |
-| `renderAIChart()` | Gráfica ApexCharts gold |
+| `renderAIChart()` | Gráfica ApexCharts red |
 | `applyAISuggestion()` | Aplica recomendación al state |
 | `closeAI()` | Cierra modal IA |
 | `generarCotizacion()` | Exporta PDF |
@@ -371,7 +371,25 @@ El HTML tiene **146 `<div>` abiertos y 146 cerrados**. Si editas la sidebar o el
 
 ## 📝 CHANGELOG COMPLETO
 
-### v2.3 — 15 Abril 2026 (Sesión Opus 4.5 — Motor IA + Refactorización Total)
+### v2.5 — 17 Abril 2026 (Rediseño Noir & Tactical Red)
+- **[UI/UX]** Refactorización completa de la paleta de colores. Se eliminó la dependencia visual del color oro/amarillo (`#D4AF37`) en favor de una paleta "Tactical Red" (`#D32F2F` en dark mode, `#B71C1C` en light mode) alineada a la doctrina 33X.
+- **[UI/UX]** Actualizado el subtítulo del encabezado para reflejar la naturaleza de la herramienta como backoffice: *"Motor Táctico de Rentabilidad B2B"*.
+- **[JS]** Actualizada la paleta de colores de las gráficas 3D de la IA para usar gradientes carmesí.
+
+### v2.4 — 17 Abril 2026 (Sincronización Total Catálogo B2B)
+- **[CONFIG]** Se inyectaron 13 campos faltantes en la barra lateral de configuración (Sidebar) para los marcos fotográficos.
+  - **Línea A1:** 16x24, 20x24, 24x30.
+  - **Línea B2:** 11x16, 16x24, 20x24, 24x30.
+  - **Línea C1:** 8x12, 11x16, 12x16, 12x18, 16x24, 20x24.
+- **[DOCS]** La calculadora ahora está mapeada al 100% con el archivo maestro de precios: `Catálogo de Costos Netos de Producción - Abril 2026 PHOTOPRO VICTORIA.md`. Cero precios "duros" ocultos en el código; todo es editable desde la UI.
+
+### v2.3 — 17 Abril 2026 (Sesión Opus 4.5 — Estabilidad Suprema y UX)
+- **[STABLE]** Purga anti-corrupción (Ghost Purge V33X_FINAL_3) resuelve permanentemente la propagación de valores `NaN`.
+- **[STABLE]** Carga de datos con *deep merge* estructural (previene pérdida de keys nuevas en configuraciones viejas de localStorage).
+- **[UI]** Override Manual en precios de fotografía — El usuario puede ahora forzar una métrica ignorando por completo el cálculo automático sin que el motor colapse con "NaN".
+- **[UI]** Inyectados botones de "0" en paneles de horas y cámaras (Foto y Video) permitiendo **quitar** selecciones activas fluidamente.
+- **[FIX]** Add-ons personalizados (customAddons) ahora multiplican correctamente el `qty × price` en vez de ignorar la cantidad.
+- **[FIX]** Independencia de Horas: `setHours()` ya no limpia accidentalmente la selección de horas de video y se activó `setVideoHours()` nativamente en el motor JS.
 - **[AI]** Motor de optimización NVIDIA NIM (GLM-5.1) con ApexCharts
 - **[AI]** Fallback local `simulateAI()` cuando no hay API / red
 - **[AI]** Configuración de API Key + Master Prompt en sidebar (persistencia localStorage)
@@ -386,6 +404,141 @@ El HTML tiene **146 `<div>` abiertos y 146 cerrados**. Si editas la sidebar o el
 - **[FIX]** Balance de divs: 146/146 verificado
 - **[FIX]** cfg_ai_prompt movido a DOMContentLoaded (evita crash al cargar)
 - **[FIX]** Eliminación de IDs huérfanos (cfg_addon_streaming, cfg_video_hora)
+- **[FIX]** Sanitización estricta mediante isNaN() en todos los text inputs.
+
+### v2.2 — 15 Abril 2026 (Sincronización Catálogo)
+- Actualización de precios marcos A1, B2, C1 al Catálogo Abril 2026
+- Módulo Mayoreo / Solo Impresión con 6 tamaños
+- Sección Extras LAB (bases + escaneos)
+- Slider de margen extendido a 10x con step 0.1
+
+### v2.1 — Abril 2026 (Dark Mode + UX)
+- Dark/Light mode toggle con persistencia
+- Detección automática de preferencia del sistema
+- Purga de inputs duplicados
+- Botón "Otro" para eventos custom
+
+### v2.0 — Marzo 2026 (Fundación)
+- Arquitectura Vanilla Stack (HTML + CSS + JS)
+- Sistema de cotización con margen dinámico
+- Exportación PDF con blindaje anti-regateo
+- Auto-save en localStorage
+
+---
+
+## 🧠 DECISIONES DE ARQUITECTURA (ADR)
+
+### ADR 001: Soberanía Tecnológica (Vanilla Stack)
+Despreciamos React/Node/AWS. El cotizador necesitaba latencia cero y despliegue instantáneo offline. Ganamos inmunidad a WiFi, servidores, npm y pagos recurrentes.
+
+### ADR 002: Desacoplamiento DOM ↔ Pricing Data
+Variables de costos extraídas de JS a campos editables en sidebar. El operador cambia precios en la UI sin tocar código.
+
+### ADR 003: Blindaje Anti-Regateo en PDF
+El PDF multiplica `unitario × margen` y muestra el resultado fusionado. Nunca expone el multiplicador ni los costos base.
+
+### ADR 004: Dark Mode = Solo CSS
+El toggle modifica `data-theme` en `<html>`. No toca state, costos ni localStorage de datos. Separación total de capas visuales y funcionales.
+
+### ADR 005: IA Híbrida (Real + Simulación)
+Si hay API Key y red → dispara NVIDIA NIM real. Si no → simulación local con reglas heurísticas. El usuario siempre tiene una respuesta, nunca un error.
+
+### ADR 006: Arrays Dinámicos > Radio Buttons
+Sesión previa y add-ons migraron de opciones fijas (radio) a arrays dinámicos (`sesionItems[]`, `customAddons[]`). Escalabilidad infinita sin modificar código.
+
+---
+
+## 🚀 DEPLOYMENT (GitHub Pages)
+
+### Datos del Repositorio
+
+| Campo | Valor |
+|:------|:------|
+| **GitHub Username** | `sanluispropublicidad-ai` |
+| **Repo** | `calculadora-slpro` |
+| **URL del repo** | https://github.com/sanluispropublicidad-ai/calculadora-slpro |
+| **URL pública (live)** | https://sanluispropublicidad-ai.github.io/calculadora-slpro/ |
+| **Branch** | `main` |
+| **GitHub Pages** | ✅ Activo (deploy from branch, root /) |
+| **Hosting** | GitHub Pages (gratis, HTTPS automático) |
+| **Primer deploy** | 16 Abril 2026 |
+
+### Archivos que se suben al repo
+
+| Archivo | Se sube | Razón |
+|:--------|:--------|:------|
+| `index.html` | ✅ | UI principal |
+| `styles.css` | ✅ | Estilos |
+| `app.js` | ✅ | Motor de cálculo |
+| `README.md` | ✅ | Documentación |
+| `.gitignore` | ✅ | Protección |
+| `secrets.txt` | ❌ **NUNCA** | Estrategia de negocio privada |
+| `config/` | ❌ | Carpeta reservada local |
+| `output/` | ❌ | Caché local |
+| `*.md` (pecados, catálogo, checklist) | ❌ | Docs internos de negocio |
+
+### Cómo hacer push de cambios
+
+**Desde terminal (PowerShell):**
+```powershell
+# 1. Navegar al proyecto
+Set-Location "c:\Users\SAN LUIS PRO\SANLUISPROOAZ\2026-2027\CALCULADORA_V2"
+
+# 2. Ver qué cambió
+git status
+
+# 3. Agregar archivos modificados
+git add index.html styles.css app.js README.md
+
+# 4. Commit con mensaje descriptivo
+git commit -m "descripcion del cambio"
+
+# 5. Push a GitHub (se actualiza el sitio en 1-2 min)
+git push origin main
+```
+
+**Desde Antigravity IDE (con MCP GitHub):**
+```
+"sube los cambios de la calculadora a GitHub"
+→ El agente ejecuta git add + commit + push automáticamente
+```
+
+### Cómo verificar que el sitio está vivo
+1. Abrir: https://sanluispropublicidad-ai.github.io/calculadora-slpro/
+2. Tras cada push, GitHub Pages tarda **1-3 minutos** en actualizar
+3. Si dice "Site not found" → esperar y reload
+
+### Git Config del proyecto
+```
+user.name = San Luis PRO
+user.email = sanluispro@slpro.com
+remote.origin = https://github.com/sanluispropublicidad-ai/calculadora-slpro.git
+```
+
+---
+
+*README forjado por Claude Opus 4.5 bajo doctrina 33X. Cualquier modelo que toque este código: lee los gotchas primero.*
+- **[STABLE]** Purga anti-corrupción (Ghost Purge V33X_FINAL_3) resuelve permanentemente la propagación de valores `NaN`.
+- **[STABLE]** Carga de datos con *deep merge* estructural (previene pérdida de keys nuevas en configuraciones viejas de localStorage).
+- **[UI]** Override Manual en precios de fotografía — El usuario puede ahora forzar una métrica ignorando por completo el cálculo automático sin que el motor colapse con "NaN".
+- **[UI]** Inyectados botones de "0" en paneles de horas y cámaras (Foto y Video) permitiendo **quitar** selecciones activas fluidamente.
+- **[FIX]** Add-ons personalizados (customAddons) ahora multiplican correctamente el `qty × price` en vez de ignorar la cantidad.
+- **[FIX]** Independencia de Horas: `setHours()` ya no limpia accidentalmente la selección de horas de video y se activó `setVideoHours()` nativamente en el motor JS.
+- **[AI]** Motor de optimización NVIDIA NIM (GLM-5.1) con ApexCharts
+- **[AI]** Fallback local `simulateAI()` cuando no hay API / red
+- **[AI]** Configuración de API Key + Master Prompt en sidebar (persistencia localStorage)
+- **[UI]** +3 tipos de evento: Sesión, Video Musical, Evento Privado
+- **[UI]** Video refactorizado: 5 opciones (Sin/Highlight/1Cam/2Cam/3Cam) + horas independientes
+- **[UI]** Streaming dividido: iPhone ($800) + ATEM ($2,500) en vez de uno genérico
+- **[UI]** Sesión Previa: sistema dinámico con dropdown de elementos + precio editable
+- **[UI]** Add-ons: botón ➕ para crear add-ons personalizados
+- **[UI]** Maquillaje como add-on independiente
+- **[UI]** Portarretratos: nueva sección con nombre + precio + cantidad custom
+- **[CONFIG]** Sidebar actualizada con: streaming split, maquillaje, video 3 cáms/hora
+- **[FIX]** Balance de divs: 146/146 verificado
+- **[FIX]** cfg_ai_prompt movido a DOMContentLoaded (evita crash al cargar)
+- **[FIX]** Eliminación de IDs huérfanos (cfg_addon_streaming, cfg_video_hora)
+- **[FIX]** Sanitización estricta mediante isNaN() en todos los text inputs.
 
 ### v2.2 — 15 Abril 2026 (Sincronización Catálogo)
 - Actualización de precios marcos A1, B2, C1 al Catálogo Abril 2026

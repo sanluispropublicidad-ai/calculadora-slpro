@@ -10,10 +10,10 @@ TEMA OSCURO (DEFAULT)
 --bg-card: #141414;
 --bg-input: #1a1a1a;
 --bg-hover: #222;
---gold: #D4AF37;
---gold-light: #F4D03F;
+--gold: #D32F2F; /* Rojo Táctico (antes oro) */
+--gold-light: #FF5252;
 --green: #27AE60;
---red: #C0392B;
+--red: #8B0000; /* Rojo oscuro para remover/errores */
 --blue: #3498DB;
 --text: #fff;
 --text-dim: #888;
@@ -29,10 +29,10 @@ TEMA CLARO
 --bg-card: #ffffff;
 --bg-input: #e8e8e8;
 --bg-hover: #d4d4d4;
---gold: #B8860B;
---gold-light: #DAA520;
+--gold: #B71C1C; /* Rojo Profundo (antes oro) */
+--gold-light: #E53935;
 --green: #219150;
---red: #A93226;
+--red: #780000;
 --blue: #2980B9;
 --text: #1a1a1a;
 --text-dim: #555;
@@ -813,10 +813,29 @@ body {
     z-index: 1000;
     align-items: center;
     justify-content: center;
+    backdrop-filter: blur(8px);
 }
 
 .modal.show {
     display: flex;
+    animation: fadeInBg 0.3s ease forwards;
+}
+
+@keyframes fadeInBg {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slamIn {
+    0% { transform: scale(0.1) translateY(100vh) rotateX(45deg); opacity: 0; }
+    70% { transform: scale(1.1) translateY(-20px) rotateX(-10deg); opacity: 1; }
+    100% { transform: scale(1) translateY(0) rotateX(0); opacity: 1; }
+}
+
+#modalAI.modal.show .modal-content {
+    animation: slamIn 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    transform-style: preserve-3d;
+    box-shadow: 0 40px 100px rgba(212, 175, 55, 0.6);
 }
 
 .modal-content {

@@ -5,14 +5,14 @@
 
 // Estado global
 let state = {
-    evento: 'bodas',
-    horas: 4,
-    cams: 1,
+    evento: '',
+    horas: 0,
+    cams: 0,
     addonDrone: false,
     addonStreamingIphone: false,
     addonStreamingAtem: false,
     addon2cam: false,
-    addonUsb: true,
+    addonUsb: false,
     addonMaquillaje: false,
     addonFlyers: false,
     addonViaticos: false,
@@ -34,7 +34,8 @@ let state = {
     extra_base_x_ch: false,
     extra_base_x_gr: false,
     extra_escaneo_norm: false,
-    extra_escaneo_neg: false
+    extra_escaneo_neg: false,
+    precioFotografiaOverride: null
 };
 
 // Costos base (se leen de config)
@@ -134,14 +135,18 @@ const fotoBulkOptions = [
 // ========================================
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Purga obligatoria de fantasmas heredados del bug anterior
+    if (!localStorage.getItem('slpro_ghost_purge_v33x_FINAL_3')) {
+        localStorage.removeItem('slpro_calc_state');
+        localStorage.removeItem('slpro_calc_costos');
+        localStorage.setItem('slpro_ghost_purge_v33x_FINAL_3', 'true');
+    }
+    
     // Cargar datos persistentes
     loadFromStorage();
     
-    // Si no hay filas, agregar iniciales
-    if (state.frames.length === 0) addFrameRow();
-    if (state.canvases.length === 0) addCanvasRow();
-    if (state.fotos.length === 0) addFotoRow();
-    if (state.bulk.length === 0) addBulkRow();
+    // Si no hay filas, se queda en blanco para iniciar en verdadero $0
+    // Ya no inyectamos addFrameRow() ni demás filas de golpe.
     
     // Renderizar filas guardadas
     renderDynamicRows();
@@ -173,25 +178,43 @@ function loadFromStorage() {
     const savedCostos = localStorage.getItem('slpro_calc_costos');
     
     if (savedState) {
-        state = { ...state, ...JSON.parse(savedState) };
-        // Actualizar UI con el estado
-        document.getElementById('cliente_nombre').value = state.cliente?.nombre || '';
-        document.getElementById('cliente_evento').value = state.cliente?.evento || '';
-        document.getElementById('cliente_fecha').value = state.cliente?.fecha || '';
-        document.getElementById('cliente_email').value = state.cliente?.email || '';
+        try {
+            state = { ...state, ...JSON.parse(savedState) };
+            // Actualizar UI con el estado
+            document.getElementById('cliente_nombre').value = state.cliente?.nombre || '';
+            document.getElementById('cliente_evento').value = state.cliente?.evento || '';
+            document.getElementById('cliente_fecha').value = state.cliente?.fecha || '';
+            document.getElementById('cliente_email').value = state.cliente?.email || '';
+        } catch (e) {}
     }
     
     if (savedCostos) {
-        costos = JSON.parse(savedCostos);
-        // Actualizar inputs de config
-        syncConfigInputs();
+        try {
+            let parsedCostos = JSON.parse(savedCostos);
+            if (parsedCostos.sesion) parsedCostos.sesion = { ...costos.sesion, ...parsedCostos.sesion };
+            if (parsedCostos.frames) parsedCostos.frames = { ...costos.frames, ...parsedCostos.frames };
+            if (parsedCostos.canvases) parsedCostos.canvases = { ...costos.canvases, ...parsedCostos.canvases };
+            if (parsedCostos.fotos) parsedCostos.fotos = { ...costos.fotos, ...parsedCostos.fotos };
+            if (parsedCostos.bulk) parsedCostos.bulk = { ...costos.bulk, ...parsedCostos.bulk };
+            if (parsedCostos.extras) parsedCostos.extras = { ...costos.extras, ...parsedCostos.extras };
+            if (parsedCostos.flyers) parsedCostos.flyers = { ...costos.flyers, ...parsedCostos.flyers };
+            costos = { ...costos, ...parsedCostos };
+            
+            // Actualizar inputs de config
+            try {
+                syncConfigInputs();
+            } catch (e) {
+                console.error("Error in syncConfigInputs", e);
+            }
+        } catch (e) {}
     }
 }
 
 function syncUIWithState() {
-    document.getElementById('addon_drone').checked = state.addonDrone;
-    document.getElementById('addon_streaming').checked = state.addonStreaming;
-    document.getElementById('addon_2cam').checked = state.addon2cam;
+document.getElementById('addon_drone').checked = state.addonDrone;
+document.getElementById('addon_streaming_iphone').checked = state.addonStreamingIphone;
+document.getElementById('addon_streaming_atem').checked = state.addonStreamingAtem;
+document.getElementById('addon_2cam').checked = state.addon2cam;
     document.getElementById('addon_usb').checked = state.addonUsb;
     document.getElementById('addon_flyers').checked = state.addonFlyers;
     document.getElementById('addon_viaticos').checked = state.addonViaticos;
@@ -217,34 +240,50 @@ function syncConfigInputs() {
     document.getElementById('cfg_crew_hora').value = costos.crewHora;
     document.getElementById('cfg_crew_asistente').value = costos.asistente;
     document.getElementById('cfg_crew_camarografo').value = costos.camarografo;
-    document.getElementById('cfg_addon_drone').value = costos.drone;
-    document.getElementById('cfg_addon_streaming').value = costos.streaming;
-    document.getElementById('cfg_addon_2cam').value = costos.cam2;
+document.getElementById('cfg_addon_drone').value = costos.drone;
+document.getElementById('cfg_addon_streaming_iphone').value = costos.streamingIphone;
+document.getElementById('cfg_addon_streaming_atem').value = costos.streamingAtem;
+document.getElementById('cfg_addon_2cam').value = costos.cam2;
     document.getElementById('cfg_addon_usb').value = costos.usb;
     document.getElementById('cfg_sesion_1').value = costos.sesion[1];
     document.getElementById('cfg_sesion_2').value = costos.sesion[2];
     document.getElementById('cfg_sesion_3').value = costos.sesion[3];
-    document.getElementById('cfg_video_highlight').value = costos.videoHighlight;
-    document.getElementById('cfg_video_hora').value = costos.videoHora;
-    document.getElementById('cfg_viaticos_gas').value = costos.viaticosGas;
+document.getElementById('cfg_video_highlight').value = costos.videoHighlight;
+document.getElementById('cfg_video_cam1_hora').value = costos.videoCam1Hora;
+document.getElementById('cfg_video_cam2_hora').value = costos.videoCam2Hora;
+document.getElementById('cfg_video_cam3_hora').value = costos.videoCam3Hora;
+document.getElementById('cfg_viaticos_gas').value = costos.viaticosGas;
     
     // A1
     document.getElementById('cfg_a1_11x14').value = costos.frames['A1_11x14'];
     document.getElementById('cfg_a1_16x20').value = costos.frames['A1_16x20'];
+    document.getElementById('cfg_a1_16x24').value = costos.frames['A1_16x24'];
+    document.getElementById('cfg_a1_20x24').value = costos.frames['A1_20x24'];
     document.getElementById('cfg_a1_20x30').value = costos.frames['A1_20x30'];
+    document.getElementById('cfg_a1_24x30').value = costos.frames['A1_24x30'];
     document.getElementById('cfg_a1_24x36').value = costos.frames['A1_24x36'];
     
     // B2
     document.getElementById('cfg_b2_8x10').value = costos.frames['B2_8x10'];
     document.getElementById('cfg_b2_11x14').value = costos.frames['B2_11x14'];
+    document.getElementById('cfg_b2_11x16').value = costos.frames['B2_11x16'];
     document.getElementById('cfg_b2_16x20').value = costos.frames['B2_16x20'];
+    document.getElementById('cfg_b2_16x24').value = costos.frames['B2_16x24'];
+    document.getElementById('cfg_b2_20x24').value = costos.frames['B2_20x24'];
     document.getElementById('cfg_b2_20x30').value = costos.frames['B2_20x30'];
+    document.getElementById('cfg_b2_24x30').value = costos.frames['B2_24x30'];
     document.getElementById('cfg_b2_24x36').value = costos.frames['B2_24x36'];
     
     // C1
     document.getElementById('cfg_c1_8x10').value = costos.frames['C1_8x10'];
+    document.getElementById('cfg_c1_8x12').value = costos.frames['C1_8x12'];
     document.getElementById('cfg_c1_11x14').value = costos.frames['C1_11x14'];
+    document.getElementById('cfg_c1_11x16').value = costos.frames['C1_11x16'];
+    document.getElementById('cfg_c1_12x16').value = costos.frames['C1_12x16'];
+    document.getElementById('cfg_c1_12x18').value = costos.frames['C1_12x18'];
     document.getElementById('cfg_c1_16x20').value = costos.frames['C1_16x20'];
+    document.getElementById('cfg_c1_16x24').value = costos.frames['C1_16x24'];
+    document.getElementById('cfg_c1_20x24').value = costos.frames['C1_20x24'];
     document.getElementById('cfg_c1_20x30').value = costos.frames['C1_20x30'];
     
     // Canvas
@@ -290,12 +329,17 @@ function renderDynamicRows() {
     document.getElementById('fotoContainer').innerHTML = '';
     document.getElementById('bulkContainer').innerHTML = '';
     document.getElementById('customContainer').innerHTML = '';
+    document.getElementById('portarretratosContainer').innerHTML = '';
     
     state.frames.forEach(f => renderFrameRow(f));
     state.canvases.forEach(c => renderCanvasRow(c));
     state.fotos.forEach(f => renderFotoRow(f));
     state.bulk.forEach(b => renderBulkRow(b));
     state.custom.forEach(cu => renderCustomRow(cu));
+    state.portarretratos.forEach(p => renderPortarretratoRow(p));
+    
+    if (typeof rebuildSesionRows === 'function') rebuildSesionRows();
+    if (typeof rebuildCustomAddonsRows === 'function') rebuildCustomAddonsRows();
 }
 
 // ========================================
@@ -337,20 +381,33 @@ function updateBaseCosts() {
     // Frames A1
     costos.frames['A1_11x14'] = parseFloat(document.getElementById('cfg_a1_11x14').value) || 0;
     costos.frames['A1_16x20'] = parseFloat(document.getElementById('cfg_a1_16x20').value) || 0;
+    costos.frames['A1_16x24'] = parseFloat(document.getElementById('cfg_a1_16x24').value) || 0;
+    costos.frames['A1_20x24'] = parseFloat(document.getElementById('cfg_a1_20x24').value) || 0;
     costos.frames['A1_20x30'] = parseFloat(document.getElementById('cfg_a1_20x30').value) || 0;
+    costos.frames['A1_24x30'] = parseFloat(document.getElementById('cfg_a1_24x30').value) || 0;
     costos.frames['A1_24x36'] = parseFloat(document.getElementById('cfg_a1_24x36').value) || 0;
     
     // Frames B2
     costos.frames['B2_8x10'] = parseFloat(document.getElementById('cfg_b2_8x10').value) || 0;
     costos.frames['B2_11x14'] = parseFloat(document.getElementById('cfg_b2_11x14').value) || 0;
+    costos.frames['B2_11x16'] = parseFloat(document.getElementById('cfg_b2_11x16').value) || 0;
     costos.frames['B2_16x20'] = parseFloat(document.getElementById('cfg_b2_16x20').value) || 0;
+    costos.frames['B2_16x24'] = parseFloat(document.getElementById('cfg_b2_16x24').value) || 0;
+    costos.frames['B2_20x24'] = parseFloat(document.getElementById('cfg_b2_20x24').value) || 0;
     costos.frames['B2_20x30'] = parseFloat(document.getElementById('cfg_b2_20x30').value) || 0;
+    costos.frames['B2_24x30'] = parseFloat(document.getElementById('cfg_b2_24x30').value) || 0;
     costos.frames['B2_24x36'] = parseFloat(document.getElementById('cfg_b2_24x36').value) || 0;
     
     // Frames C1
     costos.frames['C1_8x10'] = parseFloat(document.getElementById('cfg_c1_8x10').value) || 0;
+    costos.frames['C1_8x12'] = parseFloat(document.getElementById('cfg_c1_8x12').value) || 0;
     costos.frames['C1_11x14'] = parseFloat(document.getElementById('cfg_c1_11x14').value) || 0;
+    costos.frames['C1_11x16'] = parseFloat(document.getElementById('cfg_c1_11x16').value) || 0;
+    costos.frames['C1_12x16'] = parseFloat(document.getElementById('cfg_c1_12x16').value) || 0;
+    costos.frames['C1_12x18'] = parseFloat(document.getElementById('cfg_c1_12x18').value) || 0;
     costos.frames['C1_16x20'] = parseFloat(document.getElementById('cfg_c1_16x20').value) || 0;
+    costos.frames['C1_16x24'] = parseFloat(document.getElementById('cfg_c1_16x24').value) || 0;
+    costos.frames['C1_20x24'] = parseFloat(document.getElementById('cfg_c1_20x24').value) || 0;
     costos.frames['C1_20x30'] = parseFloat(document.getElementById('cfg_c1_20x30').value) || 0;
     
     // Canvas
@@ -382,10 +439,11 @@ function updateBaseCosts() {
     costos.extras.escaneo_norm = parseFloat(document.getElementById('cfg_extra_escaneo_norm').value) || 0;
     costos.extras.escaneo_neg = parseFloat(document.getElementById('cfg_extra_escaneo_neg').value) || 0;
     
-    // Update price displays
-    document.getElementById('price_drone').textContent = '$' + costos.drone;
-    document.getElementById('price_streaming').textContent = '$' + costos.streaming;
-    document.getElementById('price_2cam').textContent = '$' + costos.cam2;
+// Update price displays
+document.getElementById('price_drone').textContent = '$' + costos.drone.toLocaleString();
+document.getElementById('price_streaming_iphone').textContent = '$' + costos.streamingIphone.toLocaleString();
+document.getElementById('price_streaming_atem').textContent = '$' + costos.streamingAtem.toLocaleString();
+document.getElementById('price_2cam').textContent = '$' + costos.cam2.toLocaleString();
     document.getElementById('price_usb').textContent = '$' + costos.usb;
     document.getElementById('viaticos_gas_rate').textContent = costos.viaticosGas;
     
@@ -447,7 +505,7 @@ function promptCustomEvent() {
 
 function setHours(horas) {
     state.horas = horas;
-    document.querySelectorAll('.hour-btn').forEach(btn => {
+    document.querySelectorAll('#hourButtons .hour-btn').forEach(btn => {
         btn.classList.toggle('active', parseInt(btn.dataset.h) === horas);
     });
     calculate();
@@ -461,16 +519,24 @@ function setCams(cams) {
     calculate();
 }
 
-function toggleFlyers() {
-    state.addonFlyers = document.getElementById('addon_flyers').checked;
-    document.getElementById('flyers_tipo').classList.toggle('hidden', !state.addonFlyers);
+function setVideoHours(horas) {
+    state.videoHoras = horas;
+    document.querySelectorAll('#videoHourButtons .hour-btn').forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.dataset.vh) === horas);
+    });
     calculate();
 }
 
+function toggleFlyers() {
+state.addonFlyers = document.getElementById('addon_flyers').checked;
+document.getElementById('flyers_tipo').classList.toggle('hidden', !state.addonFlyers);
+calculate();
+}
+
 function toggleViaticos() {
-    state.addonViaticos = document.getElementById('addon_viaticos').checked;
-    document.getElementById('viaticosInputs').classList.toggle('hidden', !state.addonViaticos);
-    calculate();
+state.addonViaticos = document.getElementById('addon_viaticos').checked;
+document.getElementById('viaticosInputs').classList.toggle('hidden', !state.addonViaticos);
+calculate();
 }
 
 // ========================================
@@ -616,7 +682,7 @@ function removePortarretrato(id) {
 
 function addFotoRow() {
     const id = Date.now();
-    const item = { id: id, value: '5x7', qty: 50 };
+    const item = { id: id, value: '8x10', qty: 1 };
     state.fotos.push(item);
     renderFotoRow(item);
     calculate();
@@ -737,21 +803,9 @@ function updateCustom(id) {
 }
 
 function removeCustom(id) {
-    document.getElementById('custom-' + id).remove();
-    state.custom = state.custom.filter(c => c.id != id);
-    calculate();
-}
-
-function toggleFlyers() {
-    const selector = document.getElementById('flyers_tipo');
-    if (selector) selector.classList.toggle('hidden', !document.getElementById('addon_flyers').checked);
-    calculate();
-}
-
-function toggleViaticos() {
-    const inputs = document.getElementById('viaticosInputs');
-    if (inputs) inputs.classList.toggle('hidden', !document.getElementById('addon_viaticos').checked);
-    calculate();
+document.getElementById('custom-' + id).remove();
+state.custom = state.custom.filter(c => c.id != id);
+calculate();
 }
 
 function updateMargin(isSlider) {
@@ -807,10 +861,17 @@ function calculate() {
     state.viaticos.casetas = parseInt(document.getElementById('viaticos_casetas').value) || 0;
     
     // Calc Photography
-    let costFoto = costos.crewBase + (state.horas * costos.crewHora);
-    if (state.cams >= 2) costFoto += costos.asistente;
-    if (state.cams >= 3) costFoto += costos.camarografo;
-    if (state.cams >= 4) costFoto += costos.cam2;
+    let costFoto = 0;
+    if (state.horas > 0 || state.cams > 0) {
+        costFoto = costos.crewBase + (state.horas * costos.crewHora);
+        if (state.cams >= 2) costFoto += costos.asistente;
+        if (state.cams >= 3) costFoto += costos.camarografo;
+        if (state.cams >= 4) costFoto += costos.cam2;
+    }
+
+    if (state.precioFotografiaOverride !== null) {
+        costFoto = state.precioFotografiaOverride;
+    }
     
     // Calc Video
     let costVideo = 0;
@@ -839,7 +900,7 @@ function calculate() {
     // Calc Custom Addons
     let costCustomAddons = 0;
     state.customAddons.forEach(a => {
-        costCustomAddons += a.price || 0;
+        costCustomAddons += (a.price || 0) * (a.qty || 1);
     });
     
     // Calc Frames
@@ -882,7 +943,7 @@ function calculate() {
     // Calc Custom
     let costCustom = 0;
     state.custom.forEach(c => {
-        costCustom += c.price * c.qty;
+        costCustom += (c.price || 0) * (c.qty || 1);
     });
     
     // Calc Extras
@@ -901,11 +962,14 @@ function calculate() {
         costPortarretratos += (p.price || 0) * (p.qty || 1);
     });
     
+    // Calc 2nd Camera Addon
+    let cost2cam_addon = state.addon2cam ? costos.cam2 : 0;
+    
     // Subtotal (Servicios base)
-    let subtotalServicios = costFoto + costVideo + costDrone + costStreaming + 
-                           costSesion + costMarcos + costCanvas + costFotos + 
-                           costBulk + costFlyers + costCustom + costUsb + costExtras +
-                           costMaquillaje + costCustomAddons + costPortarretratos;
+    let subtotalServicios = (costFoto||0) + (costVideo||0) + (costDrone||0) + (costStreaming||0) + 
+                           (costSesion||0) + (costMarcos||0) + (costCanvas||0) + (costFotos||0) + 
+                           (costBulk||0) + (costFlyers||0) + (costCustom||0) + (costUsb||0) + (costExtras||0) +
+                           (costMaquillaje||0) + (costCustomAddons||0) + (costPortarretratos||0) + (cost2cam_addon||0);
     
     // With margin (Sólo a servicios)
     let conMargen = subtotalServicios * state.margen;
@@ -947,7 +1011,9 @@ function calculate() {
     document.getElementById('sum_fotos').textContent = '$' + costFotos.toLocaleString('es-MX');
     document.getElementById('sum_flyers').textContent = '$' + costFlyers.toLocaleString('es-MX');
     document.getElementById('sum_viaticos').textContent = '$' + costViaticos.toLocaleString('es-MX');
-    document.getElementById('sum_custom').textContent = '$' + costCustom.toLocaleString('es-MX');
+    
+    let totalExtrasUI = (costCustom||0) + (costBulk||0) + (costUsb||0) + (costExtras||0) + (costMaquillaje||0) + (costCustomAddons||0) + (costPortarretratos||0) + (cost2cam_addon||0);
+    document.getElementById('sum_custom').textContent = '$' + totalExtrasUI.toLocaleString('es-MX');
     
     document.getElementById('sum_subtotal').textContent = '$' + subtotalServicios.toLocaleString('es-MX');
     document.getElementById('calcMargin').textContent = state.margen;
@@ -976,51 +1042,61 @@ function resetAll() {
     localStorage.removeItem('slpro_calc_state');
     
     state = {
-        evento: 'bodas',
-        horas: 4,
-        cams: 1,
+        evento: '',
+        horas: 0,
+        cams: 0,
         addonDrone: false,
-        addonStreaming: false,
+        addonStreamingIphone: false,
+        addonStreamingAtem: false,
         addon2cam: false,
-        addonUsb: true,
+        addonUsb: false,
+        addonMaquillaje: false,
         addonFlyers: false,
         addonViaticos: false,
-        sesion: 0,
+        sesionItems: [],
         video: 0,
+        videoHoras: 4,
         frames: [],
         canvases: [],
+        portarretratos: [],
         fotos: [],
         bulk: [],
         custom: [],
+        customAddons: [],
         margen: 3,
         tax: 0,
         discount: 0,
         viaticos: { km: 50, casetas: 200 },
+        cliente: { nombre: '', evento: '', fecha: '', email: '' },
         extra_base_x_ch: false,
         extra_base_x_gr: false,
         extra_escaneo_norm: false,
-        extra_escaneo_neg: false
+        extra_escaneo_neg: false,
+        precioFotografiaOverride: null
     };
     
     // Reset UI
     document.querySelectorAll('.event-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.event === 'bodas');
+        btn.classList.remove('active');
+        if (btn.dataset.event === 'otro') btn.textContent = '➕ OTRO';
     });
     
     document.querySelectorAll('.hour-btn').forEach(btn => {
-        btn.classList.toggle('active', parseInt(btn.dataset.h) === 4);
+        btn.classList.remove('active');
     });
     
     document.querySelectorAll('.cam-btn').forEach(btn => {
-        btn.classList.toggle('active', parseInt(btn.dataset.c) === 1);
+        btn.classList.remove('active');
     });
     
-    document.getElementById('addon_drone').checked = false;
-    document.getElementById('addon_streaming').checked = false;
-    document.getElementById('addon_2cam').checked = false;
-    document.getElementById('addon_usb').checked = true;
-    document.getElementById('addon_flyers').checked = false;
-    document.getElementById('addon_viaticos').checked = false;
+document.getElementById('addon_drone').checked = false;
+document.getElementById('addon_streaming_iphone').checked = false;
+document.getElementById('addon_streaming_atem').checked = false;
+document.getElementById('addon_2cam').checked = false;
+document.getElementById('addon_usb').checked = false;
+document.getElementById('addon_maquillaje').checked = false;
+document.getElementById('addon_flyers').checked = false;
+document.getElementById('addon_viaticos').checked = false;
     document.getElementById('extra_base_x_ch').checked = false;
     document.getElementById('extra_base_x_gr').checked = false;
     document.getElementById('extra_escaneo_norm').checked = false;
@@ -1044,11 +1120,15 @@ function resetAll() {
     document.getElementById('fotoContainer').innerHTML = '';
     document.getElementById('bulkContainer').innerHTML = '';
     document.getElementById('customContainer').innerHTML = '';
+    document.getElementById('sesionPreviaContainer').innerHTML = '';
+    document.getElementById('portarretratosContainer').innerHTML = '';
+    document.getElementById('customAddonsContainer').innerHTML = '';
     
-    addFrameRow();
-    addCanvasRow();
-    addFotoRow();
-    addBulkRow();
+    // Ya no rellenamos con filas por defecto para que quede en total $0
+    // addFrameRow();
+    // addCanvasRow();
+    // addFotoRow();
+    // addBulkRow();
     
     // Clear client info
     document.getElementById('cliente_nombre').value = '';
@@ -1349,6 +1429,11 @@ function addCustomAddon() {
 
 function removeCustomAddon(idx) {
     state.customAddons.splice(idx, 1);
+    rebuildCustomAddonsRows();
+    calculate();
+}
+
+function rebuildCustomAddonsRows() {
     const container = document.getElementById('customAddonsContainer');
     container.innerHTML = '';
     const items = [...state.customAddons];
@@ -1363,7 +1448,6 @@ function removeCustomAddon(idx) {
             row.querySelector('input[type="number"]').value = item.price;
         }
     });
-    calculate();
 }
 
 
@@ -1529,55 +1613,65 @@ function runSimulation(insight, diffContainer) {
 }
 
 function renderAIChart(current, optimized) {
-    const options = {
-        series: [{
-            name: 'Inversión Total',
-            data: [Math.round(current), Math.round(optimized)]
-        }],
+    if (aiChart) {
+        try { aiChart.destroy(); } catch(e) {}
+    }
+
+    aiChart = Highcharts.chart('chart_profit', {
         chart: {
-            type: 'bar',
-            height: 300,
-            toolbar: { show: false },
-            background: 'transparent'
+            type: 'column',
+            backgroundColor: 'transparent',
+            options3d: {
+                enabled: true,
+                alpha: 15,
+                beta: 15,
+                depth: 60,
+                viewDistance: 25
+            }
+        },
+        title: { text: null },
+        xAxis: {
+            categories: ['ESTATUS ACTUAL', 'POTENCIAL 33X'],
+            labels: { style: { color: '#D32F2F', fontWeight: 'bold', fontSize: '14px' } },
+            gridLineWidth: 0
+        },
+        yAxis: {
+            title: { text: null },
+            visible: false,
+            gridLineWidth: 0
         },
         plotOptions: {
-            bar: {
-                borderRadius: 10,
-                columnWidth: '50%',
-                distributed: true,
-                dataLabels: { position: 'top' }
+            column: {
+                depth: 40,
+                colorByPoint: true,
+                dataLabels: {
+                    enabled: true,
+                    format: '${point.y:,.0f}',
+                    style: { color: '#ffffff', textOutline: 'none', fontSize: '18px', fontWeight: 'bold' }
+                }
             }
         },
-        colors: ['#444', '#D4AF37'],
-        fill: {
-            type: 'gradient',
-            gradient: {
-                shade: 'dark',
-                type: 'vertical',
-                shadeIntensity: 0.5,
-                gradientToColors: ['#666', '#F4D03F'],
-                stops: [0, 100]
+        colors: [
+            {
+               linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+               stops: [ [0, '#555'], [1, '#222'] ]
+            },
+            {
+               linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+               stops: [ [0, '#FF5252'], [1, '#D32F2F'] ]
             }
-        },
-        dataLabels: {
-            enabled: true,
-            formatter: (val) => '$' + val.toLocaleString(),
-            offsetY: -20,
-            style: { colors: ['#fff'], fontSize: '14px', fontWeight: 700 }
-        },
-        xaxis: {
-            categories: ['Actual', 'Potencial 33X'],
-            labels: { style: { colors: '#888' } }
-        },
-        yaxis: { show: false },
-        theme: { mode: 'dark' },
-        grid: { show: false },
+        ],
+        series: [{
+            name: 'Cotización',
+            data: [
+                { y: Math.round(current) },
+                { y: Math.round(optimized) }
+            ],
+            showInLegend: false
+        }],
+        credits: { enabled: false },
         tooltip: { enabled: false }
-    };
-
-    if (aiChart) aiChart.destroy();
-    aiChart = new ApexCharts(document.querySelector("#chart_profit"), options);
-    aiChart.render();
+    });
 }
 
 function applyAIOptimization() {
@@ -1615,3 +1709,13 @@ window.addEventListener('DOMContentLoaded', () => {
         if (savedKey) keyEl.value = savedKey;
     }
 });
+
+function handlePrecioFotoOverride(val) {
+    let parsed = parseFloat(val);
+    if (isNaN(parsed)) {
+        state.precioFotografiaOverride = null;
+    } else {
+        state.precioFotografiaOverride = parsed;
+    }
+    calculate();
+}
